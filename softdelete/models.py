@@ -42,11 +42,6 @@ def _determine_change_set(obj, create=True):
 
 
 class SoftDeleteQuerySet(query.QuerySet):
-    def all_with_deleted(self):
-        qs = super(SoftDeleteQuerySet, self).all()
-        qs.__class__ = SoftDeleteQuerySet
-        return qs
-
     def delete(self, using='default', *args, **kwargs):
         if not len(self):
             return
@@ -68,6 +63,7 @@ class SoftDeleteQuerySet(query.QuerySet):
 
 
 class SoftDeleteManager(models.Manager):
+    _queryset_class = SoftDeleteQuerySet
 
     def _get_base_queryset(self):
         '''
@@ -92,29 +88,21 @@ class SoftDeleteManager(models.Manager):
             return self.get_query_set()
 
     def get_query_set(self):
-        qs = super(SoftDeleteManager, self).get_query_set().filter(
+        return super(SoftDeleteManager, self).get_query_set().filter(
             deleted_at__isnull=True)
-        qs.__class__ = SoftDeleteQuerySet
-        return qs
 
     def get_queryset(self):
-        qs = super(SoftDeleteManager, self).get_queryset().filter(
+        return super(SoftDeleteManager, self).get_queryset().filter(
             deleted_at__isnull=True)
-        qs.__class__ = SoftDeleteQuerySet
-        return qs
 
     def all_with_deleted(self, prt=False):
         if hasattr(self, 'core_filters'):  # it's a RelatedManager
-            qs = self._get_base_queryset().filter(**self.core_filters)
+            return self._get_base_queryset().filter(**self.core_filters)
         else:
-            qs = self._get_base_queryset()
-        qs.__class__ = SoftDeleteQuerySet
-        return qs
+            return self._get_base_queryset()
 
     def deleted_set(self):
-        qs = self._get_base_queryset().filter(deleted_at__isnull=0)
-        qs.__class__ = SoftDeleteQuerySet
-        return qs
+        return self._get_base_queryset().filter(deleted_at__isnull=0)
 
     def get(self, *args, **kwargs):
         if 'pk' in kwargs:
@@ -124,11 +112,9 @@ class SoftDeleteManager(models.Manager):
 
     def filter(self, *args, **kwargs):
         if 'pk' in kwargs:
-            qs = self.all_with_deleted().filter(*args, **kwargs)
+            return self.all_with_deleted().filter(*args, **kwargs)
         else:
-            qs = self._get_self_queryset().filter(*args, **kwargs)
-        qs.__class__ = SoftDeleteQuerySet
-        return qs
+            return self._get_self_queryset().filter(*args, **kwargs)
 
 
 class SoftDeleteObject(models.Model):
