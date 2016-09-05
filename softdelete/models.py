@@ -256,7 +256,7 @@ class SoftDeleteObject(models.Model):
                            using=using)
 
     def undelete(self, using='default', *args, **kwargs):
-        logging.debug('UNDELETING %s' % self)
+        logging.debug('UNDELETING %s', self)
         cs = kwargs.get('changeset') or _determine_change_set(self, False)
         cs.undelete(using)
         logging.debug('FINISHED UNDELETING RELATED %s', self)
@@ -290,7 +290,7 @@ class ChangeSet(models.Model):
         self.record = obj
 
     def undelete(self, using='default'):
-        logging.debug("CHANGESET UNDELETE: %s" % self)
+        logging.debug("CHANGESET UNDELETE: %s", self)
         self.content._do_undelete(using)
         for related in self.soft_delete_records.all():
             related.undelete(using)
