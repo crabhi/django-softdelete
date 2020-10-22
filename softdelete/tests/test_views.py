@@ -26,7 +26,7 @@ class ViewBase(TestCase):
             TestModelTwo.objects.create(extra_int=x, tmo=self.tmo1)
         self.tmo2 = TestModelOne.objects.create(extra_bool=False)
         for x in range(10):
-            TestModelTwo.objects.create(extra_int=x*x, tmo=self.tmo2)
+            TestModelTwo.objects.create(extra_int=x * x, tmo=self.tmo2)
         self.tmo2.delete()
 
 class ViewTest(ViewBase):
@@ -47,7 +47,7 @@ class ViewTest(ViewBase):
         pk = ChangeSet.objects.latest('created_date').pk
         for view_name in [reverse("softdelete.changeset.list"),
                           reverse("softdelete.changeset.view", args=(pk,)),
-                          reverse("softdelete.changeset.undelete", args=(pk,)),]:
+                          reverse("softdelete.changeset.undelete", args=(pk,)), ]:
             cli2 = Client()
             rv = cli2.get(view_name)
             self.assertEquals(rv.status_code, 302)
@@ -63,14 +63,14 @@ class ViewTest(ViewBase):
         self.rs_count = SoftDeleteRecord.objects.count()
         self.t_count = TestModelOne.objects.count()
         self.tmo1.delete()
-        self.assertEquals(self.t_count-1, TestModelOne.objects.count())
+        self.assertEquals(self.t_count - 1, TestModelOne.objects.count())
         self.assertEquals(0, self.tmo1.tmos.count())
-        self.assertEquals(self.cs_count+1, ChangeSet.objects.count())
-        self.assertEquals(self.rs_count+11, SoftDeleteRecord.objects.count())
+        self.assertEquals(self.cs_count + 1, ChangeSet.objects.count())
+        self.assertEquals(self.rs_count + 11, SoftDeleteRecord.objects.count())
         rv = self.client.get(reverse("softdelete.changeset.undelete",
                                      args=(ChangeSet.objects.latest("created_date").pk,)))
-        self.assertEquals(rv.status_code,200)
-        rv = self.client.post(reverse("softdelete.changeset.undelete", 
+        self.assertEquals(rv.status_code, 200)
+        rv = self.client.post(reverse("softdelete.changeset.undelete",
                                      args=(ChangeSet.objects.latest("created_date").pk,)),
                              {'action': 'Undelete'})
         self.assertEquals(rv.status_code, 302)

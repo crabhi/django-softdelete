@@ -88,12 +88,12 @@ class SoftDeleteRecordAdmin(admin.ModelAdmin):
         if 'undelete' in request.POST:
             obj.undelete()
             return HttpResponseRedirect('../../')
-        return super(SoftDeleteRecordAdmin, self).response_change(request, obj, 
+        return super(SoftDeleteRecordAdmin, self).response_change(request, obj,
                                                                   *args, **kwargs)
 
     def has_add_permission(self, *args, **kwargs):
         return False
-    
+
     def has_delete_permission(self, *args, **kwargs):
         return False
 
@@ -111,15 +111,14 @@ class ChangeSetAdmin(admin.ModelAdmin):
         if 'undelete' in request.POST:
             obj.undelete()
             return HttpResponseRedirect('../../')
-        return super(ChangeSetAdmin, self).response_change(request, obj, 
+        return super(ChangeSetAdmin, self).response_change(request, obj,
                                                            *args, **kwargs)
 
     def has_add_permission(self, *args, **kwargs):
         return False
-        
+
     def has_delete_permission(self, *args, **kwargs):
         return False
 
 admin.site.register(SoftDeleteRecord, SoftDeleteRecordAdmin)
 admin.site.register(ChangeSet, ChangeSetAdmin)
-

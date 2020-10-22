@@ -7,6 +7,3 @@ from softdelete.tests.test_views import *
 settings.INSTALLED_APPS += ('softdelete.test_softdelete_app',)
 loading.cache.loaded = False
 call_command('syncdb', interactive=False, verbosity=False)
-
-
-

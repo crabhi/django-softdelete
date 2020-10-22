@@ -5,7 +5,7 @@ import logging
 
 class SoftDeleteObjectAdminForm(ModelForm):
     deleted = BooleanField(required=False)
-    
+
     class Meta:
         model = SoftDeleteObject
         exclude = ('deleted_at',)
@@ -24,7 +24,7 @@ class SoftDeleteObjectAdminForm(ModelForm):
         return cleaned_data
 
     def save(self, commit=True, *args, **kwargs):
-        model = super(SoftDeleteObjectAdminForm, self).save(commit=False, 
+        model = super(SoftDeleteObjectAdminForm, self).save(commit=False,
                                                             *args, **kwargs)
         model.deleted = self.cleaned_data['deleted']
         if commit:
@@ -39,4 +39,3 @@ class SoftDeleteRecordAdminForm(ModelForm):
         model = SoftDeleteRecord
         readonly_fields = ('created', )
         exclude = ('content_type', 'object_id', 'changeset')
-

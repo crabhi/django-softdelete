@@ -10,12 +10,12 @@ setup(name='django-softdelete',
       license="BSD",
       url="https://github.com/scoursen/django-softdelete",
       packages=find_packages(),
-      install_requires=['setuptools',],
+      install_requires=['setuptools', ],
       include_package_data=True,
-      setup_requires=['setuptools_hg',],
+      setup_requires=['setuptools_hg', ],
       classifiers=[
         'Framework :: Django',
         'License :: OSI Approved :: BSD License',
         'Environment :: Web Environment',
-        ]
+      ]
 )
