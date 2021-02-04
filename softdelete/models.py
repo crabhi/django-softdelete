@@ -120,10 +120,7 @@ class SoftDeleteManager(models.Manager):
 
 
 class SoftDeleteObject(models.Model):
-    deleted_at = models.DateTimeField(
-        blank=True, null=True, default=None,
-        editable=False, db_index=True
-    )
+    deleted_at = models.DateTimeField(blank=True, null=True, default=None)
     objects = SoftDeleteManager()
 
     class Meta:
