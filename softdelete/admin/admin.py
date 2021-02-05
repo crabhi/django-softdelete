@@ -22,20 +22,26 @@ class SoftDeleteObjectInline(admin.TabularInline):
         if ordering:
             qs = qs.order_by(*ordering)
         return qs
-    
+
     queryset = get_queryset
 
 class SoftDeleteObjectAdmin(admin.ModelAdmin):
     form = SoftDeleteObjectAdminForm
-    actions = ['delete_selected', 'soft_undelete']
+    actions = ['soft_delete', 'soft_undelete']
 
-    def delete_selected(self, request, queryset):
+    def soft_delete(self, request, queryset):
         queryset.delete()
-    delete_selected.short_description = 'Soft delete selected objects'
+    soft_delete.short_description = 'Soft delete selected objects'
 
     def soft_undelete(self, request, queryset):
         queryset.undelete()
     soft_undelete.short_description = 'Undelete selected objects'
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
 
     def response_change(self, request, obj, *args, **kwargs):
         if 'undelete' in request.POST:
@@ -52,7 +58,7 @@ class SoftDeleteObjectAdmin(admin.ModelAdmin):
         if ordering:
             qs = qs.order_by(*ordering)
         return qs
-    
+
     queryset = get_queryset
 
 class SoftDeleteRecordInline(admin.TabularInline):
@@ -74,12 +80,12 @@ class SoftDeleteRecordAdmin(admin.ModelAdmin):
         if 'undelete' in request.POST:
             obj.undelete()
             return HttpResponseRedirect('../../')
-        return super(SoftDeleteRecordAdmin, self).response_change(request, obj, 
+        return super(SoftDeleteRecordAdmin, self).response_change(request, obj,
                                                                   *args, **kwargs)
 
     def has_add_permission(self, *args, **kwargs):
         return False
-    
+
     def has_delete_permission(self, *args, **kwargs):
         return False
 
@@ -97,15 +103,14 @@ class ChangeSetAdmin(admin.ModelAdmin):
         if 'undelete' in request.POST:
             obj.undelete()
             return HttpResponseRedirect('../../')
-        return super(ChangeSetAdmin, self).response_change(request, obj, 
+        return super(ChangeSetAdmin, self).response_change(request, obj,
                                                            *args, **kwargs)
 
     def has_add_permission(self, *args, **kwargs):
         return False
-        
+
     def has_delete_permission(self, *args, **kwargs):
         return False
 
 admin.site.register(SoftDeleteRecord, SoftDeleteRecordAdmin)
 admin.site.register(ChangeSet, ChangeSetAdmin)
-
