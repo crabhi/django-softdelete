@@ -104,7 +104,7 @@ class SoftDeleteManager(models.Manager):
             return self._get_base_queryset()
 
     def deleted_set(self):
-        return self._get_base_queryset().filter(deleted_at__isnull=0)
+        return self._get_base_queryset().filter(deleted_at__isnull=False)
 
     def get(self, *args, **kwargs):
         if 'pk' in kwargs:
